@@ -10,6 +10,10 @@ A React-based application that allows users to upload images and create masks fo
 - **Side-by-side display**: View original and mask images simultaneously.
 - **Backend storage**: Image pairs are stored in a database for future access.
 
+![Screenshot 2024-12-19 235709](https://github.com/user-attachments/assets/3e09009e-112d-44da-b2c5-b7ae91349c4c)
+![Screenshot 2024-12-19 235813](https://github.com/user-attachments/assets/f2ce323b-a277-465e-b41b-f307aef5aea2)
+
+
 ## Technologies Used
 
 ### Frontend
