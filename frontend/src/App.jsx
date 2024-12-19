@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useState, useRef } from 'react';
 import CanvasDraw from 'react-canvas-draw';
-import { Upload, Trash2, Wand2 as Magic, Image as ImageIcon } from 'lucide-react'; // Importing icons for UI elements.
+import { Upload, Trash2, Wand2 as Magic, Image as ImageIcon } from 'lucide-react';
 
 const App = () => {
   const [uploadedImage, setUploadedImage] = useState(null);
@@ -12,13 +12,13 @@ const App = () => {
   const [savedImages, setSavedImages] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState(null);
+  const [saveStatus, setSaveStatus] = useState('');
+  
+  const canvasRef = useRef(null);
 
-  const canvasRef = useRef(null); // Ref to access the CanvasDraw component directly.
-
-  // Function to calculate the aspect ratio of an uploaded image file and adjust dimensions accordingly.
   const calculateAspectRatio = (file) => {
     return new Promise((resolve) => {
-      const img = new Image(); // Create a new Image object to load the file.
+      const img = new Image();
       img.onload = () => {
         setOgDimensions({
           width: img.width,
@@ -40,18 +40,18 @@ const App = () => {
     });
   };
 
-  // Function to handle image upload and prepare the canvas for drawing.
   const handleImageUpload = async (event) => {
-    const file = event.target.files?.[0]; // Get the uploaded file from input.
+    const file = event.target.files?.[0];
     if (file) {
       if (canvasRef.current) {
-        canvasRef.current.clear(); // Clear the canvas if it exists before uploading a new image.
+        canvasRef.current.clear();
       }
       setMaskImage(null);
       setSavedImages(null);
       setError(null);
+      setSaveStatus('');
 
-      const dimensions = await calculateAspectRatio(file); // Calculate and set new dimensions based on uploaded image.
+      const dimensions = await calculateAspectRatio(file);
       setCanvasSize(dimensions);
 
       const reader = new FileReader();
@@ -62,13 +62,11 @@ const App = () => {
     }
   };
 
-  // Convert base64 string to Blob for uploading to server.
   const base64ToBlob = async (base64) => {
     const response = await fetch(base64);
     return response.blob();
   };
 
-  // Function to generate a mask based on user drawing and save both images to the server.
   const generateMaskAndSave = async () => {
     if (!canvasRef.current) return;
     setIsGenerating(true);
@@ -98,39 +96,53 @@ const App = () => {
   
     const maskDataUrl = tempCanvas.toDataURL();
     setMaskImage(maskDataUrl);
-  
-    // Prepare form data for uploading images
-    const formData = new FormData();
-    const originalBlob = await base64ToBlob(uploadedImage);
-    const maskBlob = await base64ToBlob(maskDataUrl);
-  
-    const originalExt = uploadedImage.split(';')[0].split('/')[1];
-    formData.append('original', originalBlob, `original.${originalExt}`);
-    formData.append('mask', maskBlob, 'mask.png');
-  
-    // Send images to server
-    const response = await fetch('http://localhost:8000/api/upload', {
-      method: 'POST',
-      body: formData,
+    
+    // First display the local images
+    setSavedImages({
+      original_path: uploadedImage,
+      mask_path: maskDataUrl
     });
-  
-    const result = await response.json();
-    setSavedImages(result);
+    
+    // Then start the backend save process
+    try {
+      const formData = new FormData();
+      const originalBlob = await base64ToBlob(uploadedImage);
+      const maskBlob = await base64ToBlob(maskDataUrl);
+    
+      const originalExt = uploadedImage.split(';')[0].split('/')[1];
+      formData.append('original', originalBlob, `original.${originalExt}`);
+      formData.append('mask', maskBlob, 'mask.png');
+    
+      setSaveStatus('Saving images to database...');
+      
+      const response = await fetch('http://localhost:8000/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+    
+      const result = await response.json();
+      setSaveStatus('Images saved successfully in database!');
+      
+      // Update the displayed images with the ones from the server
+      setSavedImages(result);
+    } catch (err) {
+      setError('Failed to save images to database: ' + err.message);
+      setSaveStatus('');
+    }
   
     setIsGenerating(false);
   };
   
-  // Function to clear the canvas and reset states
   const clearCanvas = () => {
     if (canvasRef.current) {
       canvasRef.current.clear();
       setMaskImage(null);
       setSavedImages(null);
       setError(null);
+      setSaveStatus('');
     }
   };
 
-  // Function to determine display style for images based on their dimensions
   const getImageDisplayStyle = () => {
     const containerWidth = Math.min(canvasSize.width, 500);
     const scale = containerWidth / canvasSize.width;
@@ -157,7 +169,7 @@ const App = () => {
           <div className="upload-text">
             {uploadedImage ? 'Replace Image' : 'Upload Image'}
           </div>
-          <div className="upload-subtext"> (JPEG/PNG format)</div>
+          <div className="upload-subtext">(JPEG/PNG format)</div>
           <input
             className='upload-input'
             type="file"
@@ -168,7 +180,7 @@ const App = () => {
         </label>
       </div>
 
-      {uploadedImage && ( // Render this section only if an image has been uploaded
+      {uploadedImage && (
         <div className="canvas-container">
           <CanvasDraw
             ref={canvasRef}
@@ -215,9 +227,8 @@ const App = () => {
             </div>
           </div>
 
-          {(savedImages && maskImage) && ( // Render this section only if images have been saved successfully
+          {savedImages && (
             <div className="img-display">
-              {/* Display the Images */}
               <div className="img-card">
                 <div className="img-header">
                   <ImageIcon size={16} />
@@ -256,8 +267,23 @@ const App = () => {
             </div>
           )}
 
+          {saveStatus && (
+            <div className="save-status" style={{ 
+              color: 'green', 
+              marginTop: '1rem',
+              textAlign: 'center',
+              fontWeight: 'medium'
+            }}>
+              {saveStatus}
+            </div>
+          )}
+
           {error && (
-            <div className="error-message" style={{ color: 'red', marginTop: '1rem' }}>
+            <div className="error-message" style={{ 
+              color: 'red', 
+              marginTop: '1rem',
+              textAlign: 'center' 
+            }}>
               Error: {error}
             </div>
           )}
