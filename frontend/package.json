@@ -1,5 +1,5 @@
 {
-  "name": "image-pipeline",
+  "name": "fton",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -8,12 +8,6 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
-  },
-  "dependencies": {
-    "lucide-react": "^0.468.0",
-    "react": "^18.3.1",
-    "react-canvas-draw": "^1.2.1",
-    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
@@ -26,5 +20,11 @@
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.13.0",
     "vite": "^6.0.3"
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "react": "^17.0.2",
+    "react-canvas-draw": "^1.2.1",
+    "react-dom": "^17.0.2"
   }
 }
