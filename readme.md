@@ -9,10 +9,9 @@ A React-based application that allows users to upload images and create masks fo
 - **Adjustable brush size**: Customize the brush size for drawing.
 - **Side-by-side display**: View original and mask images simultaneously.
 - **Backend storage**: Image pairs are stored in a database for future access.
----
+
 ![Screenshot 2024-12-19 235709](https://github.com/user-attachments/assets/3e09009e-112d-44da-b2c5-b7ae91349c4c)
-![Screenshot 2024-12-19 235813](https://github.com/user-attachments/assets/f2ce323b-a277-465e-b41b-f307aef5aea2)
----
+
 
 ## Technologies Used
 
@@ -29,16 +28,16 @@ A React-based application that allows users to upload images and create masks fo
 ## Setup Instructions
 
 ### Frontend Setup
-1. Clone the repository:
+1. Clone the repository: 
     ```
     git clone https://github.com/puneethx/image-pipeline-inpainting.git
     ```
-2. Install dependencies:
+3. Install dependencies:
     ```
     cd frontend 
     npm install 
     ```
-3. Start the development server:
+4. Start the development server:
     ```
     npm run dev
     ```
@@ -47,6 +46,10 @@ A React-based application that allows users to upload images and create masks fo
 1. Install Python dependencies:
     ```
     pip install fastapi uvicorn[standard] python-multipart Pillow
+    ```
+    or
+    ```
+    pip install -r requirements.txt
     ```
 2. Start the FastAPI server:
     ```
