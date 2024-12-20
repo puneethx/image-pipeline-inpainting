@@ -149,9 +149,9 @@ const App = () => {
     <div className="App">
       <h1 className="title">Image Pipeline</h1>
       <p className="desc">Upload an image and draw on it to create a mask.</p>
+      <label>
+        <div className="upload-area">
 
-      <div className="upload-area">
-        <label>
           <Upload className="upload-icon" size={20} />
           <div className="upload-text">
             {uploadedImage ? 'Replace Image' : 'Upload Image'}
@@ -162,8 +162,8 @@ const App = () => {
             onChange={handleImageUpload}
             style={{ display: 'none' }}
           />
-        </label>
-      </div>
+        </div>
+      </label>
 
       {uploadedImage && (
         <div className="canvas-container">
@@ -193,8 +193,8 @@ const App = () => {
             </div>
 
             <div className="buttonDiv">
-              <button 
-                className="buttonone" 
+              <button
+                className="buttonone"
                 onClick={generateMaskAndFetchImages}
                 disabled={isGenerating}
               >
@@ -212,42 +212,42 @@ const App = () => {
 
       {uploadedImage && maskImage && (
         <div className="img-display">
-        <div className="img-card">
-          <div className="img-header">
-            <ImageIcon size={16} />
-            <h3 className="img-title">Original Image</h3>
-            <span className="img-dimensions">
-              {ogDimensions.width} × {ogDimensions.height}
-            </span>
+          <div className="img-card">
+            <div className="img-header">
+              <ImageIcon size={16} />
+              <h3 className="img-title">Original Image</h3>
+              <span className="img-dimensions">
+                {ogDimensions.width} × {ogDimensions.height}
+              </span>
+            </div>
+            <div className="img-content">
+              <img
+                src={uploadedImage}
+                alt="Original"
+                className="preview-img"
+                style={getImageDisplayStyle()}
+              />
+            </div>
           </div>
-          <div className="img-content">
-            <img
-              src={uploadedImage}
-              alt="Original"
-              className="preview-img"
-              style={getImageDisplayStyle()}
-            />
-          </div>
-        </div>
 
-        <div className="img-card">
-          <div className="img-header">
-            <Magic size={16} />
-            <h3 className="img-title">Generated Mask</h3>
-            <span className="img-dimensions">
-              {ogDimensions.width} × {ogDimensions.height}
-            </span>
-          </div>
-          <div className="img-content">
-            <img
-              src={maskImage}
-              alt="Mask"
-              className="preview-img"
-              style={getImageDisplayStyle()}
-            />
+          <div className="img-card">
+            <div className="img-header">
+              <Magic size={16} />
+              <h3 className="img-title">Generated Mask</h3>
+              <span className="img-dimensions">
+                {ogDimensions.width} × {ogDimensions.height}
+              </span>
+            </div>
+            <div className="img-content">
+              <img
+                src={maskImage}
+                alt="Mask"
+                className="preview-img"
+                style={getImageDisplayStyle()}
+              />
+            </div>
           </div>
         </div>
-      </div>
       )}
 
       {saveStatus && <p>{saveStatus}</p>}
