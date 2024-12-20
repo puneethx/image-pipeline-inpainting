@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 import os
 from PIL import Image
 from db_config import init_db
-from db_operations import insert_image_pair, get_image_pair, get_recent_image_pairs
+from db_operations import insert_image_pair, get_recent_image_pairs
 
 app = FastAPI()
 
@@ -83,5 +83,16 @@ async def upload_images(
         else:
             raise HTTPException(status_code=500, detail="Failed to save to database")
             
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/api/images")
+async def get_images():
+    try:
+        image_pairs = get_recent_image_pairs()  # Fetch recent image pairs from the database.
+        if image_pairs:
+            return image_pairs
+        else:
+            return {"message": "No images found"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
